@@ -1,0 +1,3 @@
+[submodule "Savestate2snes"]
+	path = Savestate2snes
+	url = ./Savestate2snes/
