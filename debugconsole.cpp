@@ -17,3 +17,8 @@ void DebugConsole::appendText(QString str)
 {
     ui->outputEdit->appendPlainText(str);
 }
+
+void DebugConsole::on_clearButton_clicked()
+{
+    ui->outputEdit->clear();
+}

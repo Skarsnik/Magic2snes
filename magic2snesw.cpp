@@ -26,10 +26,16 @@ Magic2Snesw::Magic2Snesw(QWidget *parent) :
     {
         scriptFile = m_settings->value("lastScriptFile").toString();
         ui->scriptLineEdit->setText(scriptFile);
-        ui->runScriptButton->setEnabled(true);
+        //ui->runScriptButton->setEnabled(true);
+    }
+    if (m_settings->contains("windowGeometry"))
+    {
+         restoreGeometry(m_settings->value("windowGeometry").toByteArray());
+         restoreState(m_settings->value("windowState").toByteArray());
     }
     //scriptFile = "D:/Project/Magic2snes/examples/smigtimer.qml";
     connect(qmlViewer, SIGNAL(closing(QQuickCloseEvent*)), this, SLOT(on_qmlViewClosing(QQuickCloseEvent*)));
+    connect(usb2snes, SIGNAL(stateChanged()), this, SLOT(onUsb2snesStateChanged()));
     memory = new Memory();
     memory->setUsb2snes(usb2snes);
     bit = new Bit();
@@ -66,6 +72,7 @@ void Magic2Snesw::on_runScriptButton_clicked()
     QQuickItem* obj = qmlViewer->rootObject();
     qmlViewer->rootContext()->setContextProperty("memory", memory);
     qmlViewer->rootContext()->setContextProperty("bit", bit);
+    qmlViewer->setTitle("Magic2snes - " + scriptFile);
     MagicUSB2Snes* musb = obj->findChild<MagicUSB2Snes*>("usb2snes");
     qDebug() << musb;
     qDebug() << musb->timer();
@@ -98,4 +105,18 @@ void Magic2Snesw::on_qmlViewClosing(QQuickCloseEvent *)
 void Magic2Snesw::on_exitButton_clicked()
 {
     close();
+}
+
+void Magic2Snesw::onUsb2snesStateChanged()
+{
+    if (usb2snes->state() == USB2snes::Ready)
+        ui->runScriptButton->setEnabled(true);
+    if (usb2snes->state() == USB2snes::None)
+        ui->runScriptButton->setEnabled(false);
+}
+
+void Magic2Snesw::onCloseEvent(QCloseEvent *event)
+{
+    m_settings->setValue("windowState", saveState());
+    m_settings->setValue("windowGeometry", saveGeometry());
 }

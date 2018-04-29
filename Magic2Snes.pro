@@ -26,7 +26,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         magic2snesw.cpp \
-        Savestate2snes\usb2snes.cpp \
+        usb2snes\usb2snes.cpp \
     magicusb2snes.cpp \
     memory.cpp \
     rommapping/rommapping.c \
@@ -37,7 +37,7 @@ SOURCES += \
 
 HEADERS += \
         magic2snesw.h \
-        Savestate2snes\usb2snes.h \
+        usb2snes\usb2snes.h \
     magicusb2snes.h \
     rommapping/rommapping.h \
     memory.h \
@@ -48,6 +48,11 @@ FORMS += \
         magic2snesw.ui \
     debugconsole.ui
 
+RC_FILE = magic2snes.rc
+
 RESOURCES += \
     jshelper.qrc
+
+DISTFILES += \
+    magic2snes.rc
 

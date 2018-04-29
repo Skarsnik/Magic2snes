@@ -100,9 +100,22 @@ template<typename T> T Memory::readMemory(unsigned int addr, unsigned int n) {
         addr = 0xE00000 + rommapping_sram_snes_to_pc(addr, rType, false);
     }
     QByteArray data;
+    if (pc_addr > 0)
+    {
+        unsigned char b = ((unsigned int) pc_addr) >> 16;
+        unsigned int l = pc_addr - ((unsigned int) (b << 16));
+        if (cacheRom.contains(b))
+            data = cacheRom[b].mid(l, n);
+        else
+        {
+            cacheRom[b] = usb2snes->getAddress((b << 4) & 0xFF0000, 0x10000);
+            data = cacheRom[b].mid(l, n);
+        }
+    }
+
     if (wram && useWramCache)
         data = wramCache.mid(addr - 0xF50000, n);
-    else
+    if (data.isNull())
         data = usb2snes->getAddress(addr, n);
     if (n == 1)
         return (T) data.at(0);

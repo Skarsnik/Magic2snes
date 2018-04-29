@@ -1,5 +1,6 @@
 #include "magic2snesw.h"
 #include "debugconsole.h"
+#include <QDockWidget>
 #include <QApplication>
 
 DebugConsole* debugConsole;
@@ -28,8 +29,11 @@ int main(int argc, char *argv[])
     qInstallMessageHandler(myMessageOutput);
     QApplication a(argc, argv);
     Magic2Snesw w;
+    QDockWidget dw(&w);
     debugConsole = new DebugConsole();
-    debugConsole->show();
+    dw.setWidget(debugConsole);
+    dw.setWindowTitle("Debug Console");
+    w.addDockWidget(Qt::BottomDockWidgetArea, &dw);
     w.show();
     return a.exec();
 }

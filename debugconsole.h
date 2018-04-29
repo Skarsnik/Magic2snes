@@ -16,6 +16,9 @@ public:
     ~DebugConsole();
     void    appendText(QString str);
 
+private slots:
+    void on_clearButton_clicked();
+
 private:
     Ui::DebugConsole *ui;
 };

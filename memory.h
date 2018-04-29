@@ -2,7 +2,7 @@
 #define MEMORY_H
 
 #include <QObject>
-#include "Savestate2snes/usb2snes.h"
+#include "usb2snes/usb2snes.h"
 #include "rommapping/rommapping.h"
 
 class Memory : public QObject
@@ -31,6 +31,7 @@ private:
     unsigned int    addrMapping(unsigned int addr);
     enum rom_type   rType;
     QByteArray      wramCache;
+    QMap<unsigned char, QByteArray>      cacheRom;
     bool            useWramCache;
     template<typename T>
     T readMemory(unsigned int addr, unsigned int n = sizeof(T));

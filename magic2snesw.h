@@ -3,7 +3,7 @@
 
 #include <QMainWindow>
 #include <QQuickView>
-#include "Savestate2snes/usb2snes.h"
+#include "usb2snes/usb2snes.h"
 #include "bit.h"
 #include "memory.h"
 
@@ -27,6 +27,10 @@ private slots:
     void on_qmlViewClosing(QQuickCloseEvent*);
 
     void on_exitButton_clicked();
+
+    void    onUsb2snesStateChanged();
+
+    void    onCloseEvent(QCloseEvent *event);
 
 private:
     Ui::Magic2Snesw *ui;

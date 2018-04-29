@@ -2,7 +2,7 @@
 #define MAGICUSB2SNES_H
 
 #include <QObject>
-#include "SaveState2snes/usb2snes.h"
+#include "usb2snes/usb2snes.h"
 
 /*
  * This is the real USB2Snes class exposed in QML
