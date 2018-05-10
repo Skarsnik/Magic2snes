@@ -10,6 +10,8 @@
 #include "ui_magic2snesw.h"
 #include "magicusb2snes.h"
 
+Q_LOGGING_CATEGORY(log_mainui, "MainUI")
+#define sDebug() qCDebug(log_mainui)
 
 Magic2Snesw::Magic2Snesw(QWidget *parent) :
     QMainWindow(parent),
@@ -74,9 +76,9 @@ void Magic2Snesw::on_runScriptButton_clicked()
     qmlViewer->rootContext()->setContextProperty("bit", bit);
     qmlViewer->setTitle("Magic2snes - " + scriptFile);
     MagicUSB2Snes* musb = obj->findChild<MagicUSB2Snes*>("usb2snes");
-    qDebug() << musb;
-    qDebug() << musb->timer();
-    musb->setUSB2Snes(usb2snes);
+    //musb->setUSB2Snes(usb2snes);
+    memory->clearCache();
+    memory->resumeWork();
     musb->startTimer();
     qmlViewer->show();
 }
@@ -95,9 +97,13 @@ void Magic2Snesw::on_chooseScriptButton_clicked()
 
 void Magic2Snesw::on_qmlViewClosing(QQuickCloseEvent *)
 {
+    sDebug() << "Closing event";
     QQuickItem* obj = qmlViewer->rootObject();
     MagicUSB2Snes* musb = obj->findChild<MagicUSB2Snes*>("usb2snes");
+    usb2snes->abortOp();
+    memory->stopWork();
     musb->stopTimer();
+    QThread::usleep(200);
     obj->deleteLater();
 
 }

@@ -32,6 +32,8 @@ USB2snes::USB2snes() : QObject()
     QObject::connect(&m_webSocket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(onWebSocketError(QAbstractSocket::SocketError)));
     QObject::connect(&m_webSocket, SIGNAL(disconnected()), this, SLOT(onWebSocketDisconnected()));
     QObject::connect(&m_webSocket, SIGNAL(binaryMessageReceived(QByteArray)), this, SLOT(onWebSocketBinaryReceived(QByteArray)));
+    QObject::connect(this, SIGNAL(binaryMessageReceived()), &m_eloop, SLOT(quit()));
+    QObject::connect(this, SIGNAL(disconnected()), &m_eloop, SLOT(quit()));
     QObject::connect(&timer, SIGNAL(timeout()), this, SLOT(onTimerTick()));
     requestedBinaryReadSize = 0;
 }
@@ -233,10 +235,8 @@ QByteArray USB2snes::getAddress(unsigned int addr, unsigned int size, Space spac
     m_istate = IBusy;
     sendRequest("GetAddress", QStringList() << QString::number(addr, 16) << QString::number(size, 16), space);
     requestedBinaryReadSize = size;
-    QEventLoop  loop;
-    QObject::connect(this, SIGNAL(binaryMessageReceived()), &loop, SLOT(quit()));
-    QObject::connect(this, SIGNAL(disconnected()), &loop, SLOT(quit()));
-    loop.exec();
+    if (m_eloop.exec() == -1)
+        return QByteArray();
     requestedBinaryReadSize = 0;
     sDebug() << "Getting data,  size : " << lastBinaryMessage.size() << "- MD5 : " << QCryptographicHash::hash(lastBinaryMessage, QCryptographicHash::Md5).toHex();
     m_istate = IReady;
@@ -314,4 +314,12 @@ QStringList USB2snes::deviceList()
 QVersionNumber USB2snes::serverVersion()
 {
     return m_serverVersion;
+}
+
+void USB2snes::abortOp()
+{
+    sDebug() << "Abording internal event loop";
+    m_eloop.exit(-1);
+    requestedBinaryReadSize = 0;
+    lastBinaryMessage.clear();
 }

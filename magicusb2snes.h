@@ -15,6 +15,7 @@ class MagicUSB2Snes : public QObject
 
 public:
     explicit    MagicUSB2Snes(QObject *parent = nullptr);
+    virtual     ~MagicUSB2Snes();
     void        setUSB2Snes(USB2snes* usnes);
     void        startTimer();
     void        stopTimer();
@@ -25,14 +26,20 @@ signals:
 
     void    timerChanged(int timer);
     void    timerTick();
+    void    init();
+    void    end();
 
 public slots:
 
 
     void setTimer(int timer);
 
+private slots:
+    void    m_timerTick();
+
 private:
-    USB2snes*   usb2snes;
+    bool        stopRunning;
+//    USB2snes*   usb2snes;
     int         m_timer;
     QTimer      qtimer;
 };

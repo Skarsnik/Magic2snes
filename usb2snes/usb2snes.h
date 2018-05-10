@@ -74,6 +74,7 @@ public:
     QVersionNumber          firmwareVersion();
     QStringList             deviceList();
     QVersionNumber          serverVersion();
+    void                    abortOp();
     bool                    patchROM(QString patch);
 
 signals:
@@ -107,6 +108,7 @@ private:
     QByteArray      lastBinaryMessage;
     QString         lastTextMessage;
     unsigned int    requestedBinaryReadSize;
+    QEventLoop      m_eloop;
 
     QTimer          timer;
 

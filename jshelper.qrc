@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>extrajs.js</file>
+    </qresource>
+</RCC>

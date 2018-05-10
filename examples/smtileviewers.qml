@@ -19,6 +19,7 @@ Rectangle {
     id : window
     color : "black"
     property bool cachedWram: false
+    property int mapId : 0
 
     Text {
       id : igTime
@@ -32,6 +33,14 @@ Rectangle {
         id : infoSamus
         x: 0
         y: 46
+        color : "white"
+        text: "PIKO"
+        font.pixelSize: 20
+    }
+    Text {
+        id : tmapId
+        x : 400
+        y : 0
         color : "white"
         text: "PIKO"
         font.pixelSize: 20
@@ -121,20 +130,21 @@ Rectangle {
                            }
       property var stack
       property var dctx
+      // This are the slopes drawing function
       property var slopes: {
           0x00 : function(tileX, tileY, HFlip, VFlip) {
               drawBox(tileX + 16 * HFlip, tileY + 8 + 24 * VFlip, 16, 8, 'green', 'green')
           },
-          0x12 : function(tileX, tileY, HFlip, VFlip) {
+          0x12 : function(tileX, tileY, HFlip, VFlip) { // Proper drawing of slopes using the canvas API
               dctx.strokeStyle = "light grey"
               dctx.fillStyle = "grey"
               dctx.moveTo(tileX, tileY + 16 * VFlip)
               dctx.lineTo(tileX + 16 * HFlip, tileY, tileY)
               dctx.lineTo(tileX + 16 * HFlip, tileY + 16 * VFlip)
               dctx.lineTo(tileX, tileY + 16 * VFlip)
-              dctx.stroke()
               dctx.fill()
-              return
+              dctx.stroke()
+              return // or you just want the outline
               drawLine(tileX, tileY + 16 * VFlip, tileX + 16 * HFlip, tileY, "green")
               drawLine(tileX + 16 * HFlip, tileY, tileX + 16 * HFlip, tileY + 16 * VFlip, "green")
               drawLine(tileX, tileY + 16 * VFlip, tileX + 16 * HFlip, tileY + 16 * VFlip, "green")
@@ -190,7 +200,7 @@ Rectangle {
           0x05 : function(tileX, tileY, BTS, Clip) { // Horizontal extension
               drawBox(tileX, tileY, 16, 16, 'rgb(170, 0, 170)')
               drawText("H", tileX + 4, tileY - 1, 'rgb(128, 128, 128)')
-              return
+              return // This does not work properly?
               stack = stack + 1
               var b = memory.readByte(BTS)
               if (stack < 16 && b !== 0) {
@@ -294,9 +304,6 @@ Rectangle {
               drawText("B", tileX + 4, tileY - 1, "white")
           }
       }
-
-      x: 200
-      y: 200
       function drawBox(x, y, w, h, colorS, colorF) {
         dctx.strokeStyle = colorS;
         if (colorF === undefined)
@@ -322,7 +329,7 @@ Rectangle {
       }
 
       onPaint: {
-
+          console.time("Drawing")
           if (cachedWram == false)
               return
           var radiusX = memory.readWord(0x7E0AFE)
@@ -331,10 +338,13 @@ Rectangle {
           var bottomright = [256 + radiusX, 224 + radiusY]
 
           dctx = mycanvas.getContext("2d")
-          //console.log(dctx.measureText("11").height)
+          // The canvas is actually the whole window, to set position we just need to translate the context
+          dctx.reset()
+          dctx.translate(0, 100)
+
           dctx.beginPath();
           dctx.clearRect(0, 0, mycanvas.width, mycanvas.height);
-          var p = dctx.createPattern("blue", Qt.DiagCrossPattern)
+          var p = dctx.createPattern("aqua", Qt.DiagCrossPattern)
           //drawBox(topleft[0] + 1, topleft[1] + 1, bottomright[0] - topleft[0] -2, bottomright[1] - topleft[1] - 2, "darkblue", "darkblue");
           var samusX = memory.readUnsignedWord(0x7E0AF6)
           var samusY = memory.readUnsignedWord(0x7E0AFA)
@@ -376,8 +386,8 @@ Rectangle {
                   //gui.text(TileX+3, TileY-1, "N", gui.color(128, 128, 128))
               }
           }
-          drawBox(topleft[0], topleft[1], bottomright[0] - topleft[0], bottomright[1] - topleft[1], "blue", p);
-
+          drawBox(topleft[0], topleft[1], bottomright[0] - topleft[0], bottomright[1] - topleft[1], "aqua", p);
+          console.timeEnd("Drawing")
       }
     }
 
@@ -387,24 +397,47 @@ Rectangle {
     USB2Snes {
       id : usb2snes
       objectName: "usb2snes" // Don't change this
-      timer : 500 // The interval timer value in ms. A frame is around 16 ms
+      timer : 100 // The interval timer value in ms. A frame is around 16 ms
+
+      onInit: {
+          memory.addNewCacheRange("misc", 0x7E0790, 900)
+          memory.addNewCacheRange("mapinfos", 0x7F0000,  0x10000)
+          memory.readByte(0x8F8000) // Force to cache this rom bank
+          //memory.refreshCache("mapinfos")
+          memory.refreshCache()
+      }
 
       /* Main Code is actually here */
 
       onTimerTick: {
-        memory.cacheWram()
+        console.time("tick")
+        console.time("Getting Cache")
+        memory.refreshCache("misc")
+        console.timeEnd("Getting Cache")
         cachedWram = true
-        console.log("==========NEW TICK===============")
+        console.info("==========NEW TICK===============")
         var hours = memory.readUnsignedWord(0x7E09E0)
         var minutes = memory.readUnsignedWord(0x7E09DE)
         var seconds = memory.readUnsignedWord(0x7E09DC)
         igTime.text = Helper.sprintf("%02d:%02d:%02d", hours, minutes, seconds);
 
-
-
-
+        if (memory.readUnsignedByte(0x7E079B) !== mapId)
+        {
+          if (memory.readUnsignedByte(0x7E0998) === 0x08)
+          {
+            mapId = memory.readUnsignedByte(0x7E079B)
+            memory.refreshCache("mapinfos")
+            tmapId.text = Helper.sprintf("Map ID : %04X", mapId)
+          } else {
+            return ;
+          }
+        }
+        // Calling for a redraw
         mycanvas.requestPaint()
-
+        console.timeEnd("tick")
+      }
+      onEnd: {
+          //memory.printStats()
       }
      }
 }
