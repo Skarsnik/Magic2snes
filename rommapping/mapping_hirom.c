@@ -73,6 +73,8 @@ int	hirom_sram_snes_to_pc(const unsigned int snes_addr)
     unsigned int bank = snes_addr >> 16;
     unsigned int offset = snes_addr & 0x00FFFF;
 
+    if (bank >= 0xA0 && bank <= 0xBF)
+        bank = bank - (0xA0 - 0x20);
     if (bank >= 0x20 && bank <= 0x3F && offset >= 0x6000 && offset < 0x8000)
         return (bank - 0x20) * 0x2000 + (offset - 0x6000);
     return -1;

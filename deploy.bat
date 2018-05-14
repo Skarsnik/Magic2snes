@@ -8,11 +8,11 @@ rmdir /Q /S %deployPath%
 mkdir %deployPath%
 :: Compile
 
-::"D:\Visual Studio\VC\Auxiliary\Build\vcvarsall.bat" amd64
+::"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" amd64
 mkdir %compilePath%
 cd %compilePath%
 cd
-set QMAKE_MSC_VER=1910
+::set QMAKE_MSC_VER=1910
 qmake %projectPath%\Magic2Snes.pro -spec win32-msvc "CONFIG+=release"
 nmake
 
@@ -24,9 +24,9 @@ windeployqt.exe --no-translations --no-system-d3d-compiler --no-opengl --no-svg 
 
 :: Clean up Qt extra stuff
 rmdir /Q /S %deployPath%\imageformats
-del %deployPath%\opengl32sw.dll
-del %deployPath%\libEGL.dll
-del %deployPath%\libGLESV2.dll
+::del %deployPath%\opengl32sw.dll
+::del %deployPath%\libEGL.dll
+::del %deployPath%\libGLESV2.dll
 
 xcopy /y "%vscdll%" %deployPath%
 

@@ -36,12 +36,6 @@ void Memory::resumeWork()
     m_stopOp = false;
 }
 
-static  unsigned int wram2usb2snes(unsigned int addr)
-{
-    if (addr < 0x7E0000)
-        return 0xF50000 + addr;
-    return 0xF50000 + (addr - 0x7E0000);
-}
 
 void Memory::setRomMapping(QString mappingName)
 {
@@ -61,6 +55,25 @@ bool Memory::addNewCacheRange(QString name, unsigned int start, unsigned int siz
 {
     sDebug() << "Adding new cache " << name << QString::number(start, 16) << size;
     toCache[name] = QPair<unsigned int, unsigned int>(start, size);
+    return true;
+}
+
+unsigned int    Memory::usb2snesLocation(unsigned int addr)
+{
+    int pc_addr = rommapping_snes_to_pc(addr, rType, false);
+    if (pc_addr > 0)
+        return pc_addr;
+    if (pc_addr == ROMMAPPING_LOCATION_WRAM)
+    {
+        if (addr < 0x7E0000)
+            return 0xF50000 + addr;
+        return 0xF50000 + (addr - 0x7E0000);
+    }
+    if (pc_addr == ROMMAPPING_LOCATION_SRAM)
+    {
+        addr = 0xE00000 + rommapping_sram_snes_to_pc(addr, rType, false);
+    }
+    return addr;
 }
 
 void Memory::refreshCache(QString name)
@@ -70,14 +83,14 @@ void Memory::refreshCache(QString name)
         if (toCache.contains(name))
         {
             sDebug() << "== Get Cache for : " << name << " - " << QString::number(toCache[name].first, 16) << "-" << toCache[name].second;
-            cachedStuff[name] = usb2snes->getAddress(wram2usb2snes(toCache[name].first), toCache[name].second);
+            cachedStuff[name] = usb2snes->getAddress(usb2snesLocation(toCache[name].first), toCache[name].second);
         }
     } else {
         QMapIterator<QString, QPair<unsigned int, unsigned int> > i(toCache);
         while (i.hasNext()) {
             i.next();
             sDebug() << "== Get Cache for : " << name << " - " << QString::number(i.value().first, 16) << "-" << i.value().second;
-            cachedStuff[i.key()] = usb2snes->getAddress(wram2usb2snes(i.value().first), i.value().second);
+            cachedStuff[i.key()] = usb2snes->getAddress(usb2snesLocation(i.value().first), i.value().second);
         }
     }
 }
@@ -150,6 +163,7 @@ template<typename T> T Memory::readMemory(unsigned int addr, unsigned int n) {
     if (m_stopOp)
         return toret;
     bool    wram = false;
+    bool    sram = false;
     int     wramAddr = -1;
     unsigned int origAddr = addr;
     /*sDebug() << "-------------------------------";
@@ -162,14 +176,16 @@ template<typename T> T Memory::readMemory(unsigned int addr, unsigned int n) {
     {
         wram = true;
         wramAddr = addr;
-        addr = wram2usb2snes(addr);
+        addr = usb2snesLocation(addr);
     }
     if (pc_addr == ROMMAPPING_LOCATION_SRAM)
     {
+        //sDebug() << "Reading SRAM addr" << QString::number(origAddr, 16);
         addr = 0xE00000 + rommapping_sram_snes_to_pc(addr, rType, false);
+        sram = true;
     }
     QByteArray data;
-    if (pc_addr > 0)
+    if (pc_addr > 0) // ROM
     {
         unsigned char b = ((unsigned int) pc_addr) >> 16;
         unsigned int l = pc_addr - ((unsigned int) (b << 16));
@@ -182,14 +198,14 @@ template<typename T> T Memory::readMemory(unsigned int addr, unsigned int n) {
             data = cacheRom[b].mid(l, n);
         }
     }
-    if (wram && !cachedStuff.isEmpty()) {
+    if ((wram || sram) && !cachedStuff.isEmpty()) {
         QMapIterator<QString, QPair<unsigned int, unsigned int> > i(toCache);
         while (i.hasNext()) {
             i.next();
             QPair<unsigned int, unsigned int> p = i.value();
-            if (wramAddr >= p.first && wramAddr <= p.first + p.second)
+            if (origAddr >= p.first && origAddr <= p.first + p.second)
             {
-                data = cachedStuff[i.key()].mid(wramAddr - p.first);
+                data = cachedStuff[i.key()].mid(origAddr - p.first, n);
                 break;
             }
         }

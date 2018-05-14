@@ -50,6 +50,8 @@ Magic2Snesw::~Magic2Snesw()
 
 void Magic2Snesw::on_runScriptButton_clicked()
 {
+    if (scriptFile.isNull())
+        return ;
     QUrl tmp = qmlViewer->source();
     if (tmp == QUrl::fromLocalFile(scriptFile))
     {

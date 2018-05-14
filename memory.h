@@ -45,6 +45,7 @@ private:
     template<typename T>
     T readMemory(unsigned int addr, unsigned int n = sizeof(T));
     QMap<unsigned int, unsigned int>    memoryStat;
+    unsigned int usb2snesLocation(unsigned int addr);
 };
 
 #endif // MEMORY_H
