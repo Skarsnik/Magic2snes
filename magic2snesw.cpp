@@ -79,6 +79,8 @@ void Magic2Snesw::on_runScriptButton_clicked()
     qmlViewer->setTitle("Magic2snes - " + scriptFile);
     MagicUSB2Snes* musb = obj->findChild<MagicUSB2Snes*>("usb2snes");
     //musb->setUSB2Snes(usb2snes);
+    if (!musb->windowTitle().isEmpty())
+        qmlViewer->setTitle(musb->windowTitle());
     memory->clearCache();
     memory->resumeWork();
     musb->startTimer();

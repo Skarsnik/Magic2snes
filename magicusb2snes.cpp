@@ -44,6 +44,11 @@ int MagicUSB2Snes::timer() const
     return m_timer;
 }
 
+QString MagicUSB2Snes::windowTitle() const
+{
+    return m_windowTitle;
+}
+
 void MagicUSB2Snes::setTimer(int timer)
 {
     if (m_timer == timer)
@@ -51,6 +56,17 @@ void MagicUSB2Snes::setTimer(int timer)
 
     m_timer = timer;
     emit timerChanged(m_timer);
+}
+
+void MagicUSB2Snes::setWindowTitle(QString windowTitle)
+{
+    {
+        if (m_windowTitle == windowTitle)
+            return;
+
+        m_windowTitle = windowTitle;
+        emit windowTitleChanged(m_windowTitle);
+    }
 }
 
 void MagicUSB2Snes::m_timerTick()

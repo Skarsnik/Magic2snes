@@ -166,8 +166,8 @@ template<typename T> T Memory::readMemory(unsigned int addr, unsigned int n) {
     bool    sram = false;
     int     wramAddr = -1;
     unsigned int origAddr = addr;
-    /*sDebug() << "-------------------------------";
-    sDebug() << "Want to read" << QString::number(addr, 16);*/
+    //sDebug() << "-------------------------------";
+    //sDebug() << "Want to read" << QString::number(addr, 16);
     memoryStat[addr]++;
     int pc_addr = rommapping_snes_to_pc(addr, rType, false);
     if (pc_addr > 0)
@@ -180,7 +180,7 @@ template<typename T> T Memory::readMemory(unsigned int addr, unsigned int n) {
     }
     if (pc_addr == ROMMAPPING_LOCATION_SRAM)
     {
-        //sDebug() << "Reading SRAM addr" << QString::number(origAddr, 16);
+        sDebug() << "Reading SRAM addr" << QString::number(origAddr, 16);
         addr = 0xE00000 + rommapping_sram_snes_to_pc(addr, rType, false);
         sram = true;
     }

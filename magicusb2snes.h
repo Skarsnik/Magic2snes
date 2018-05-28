@@ -12,6 +12,7 @@ class MagicUSB2Snes : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(int timer MEMBER m_timer NOTIFY timerChanged READ timer WRITE setTimer)
+    Q_PROPERTY(QString windowTitle MEMBER m_windowTitle READ windowTitle MEMBER m_windowTitle WRITE setWindowTitle MEMBER m_windowTitle NOTIFY windowTitleChanged)
 
 public:
     explicit    MagicUSB2Snes(QObject *parent = nullptr);
@@ -22,6 +23,9 @@ public:
 
     int timer() const;
 
+    QString windowTitle() const;
+
+
 signals:
 
     void    timerChanged(int timer);
@@ -29,10 +33,15 @@ signals:
     void    init();
     void    end();
 
+    void windowTitleChanged(QString windowTitle);
+
 public slots:
 
 
     void setTimer(int timer);
+
+    void setWindowTitle(QString windowTitle);
+
 
 private slots:
     void    m_timerTick();
@@ -41,6 +50,7 @@ private:
     bool        stopRunning;
 //    USB2snes*   usb2snes;
     int         m_timer;
+    QString     m_windowTitle;
     QTimer      qtimer;
 };
 

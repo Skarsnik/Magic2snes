@@ -9,6 +9,8 @@
 import QtQuick 2.0
 import USB2Snes 1.0
 import "qrc:/extrajs.js" as Helper // Some extra javascript function
+import QtQuick.Controls 1.6
+import QtQuick.Controls.Styles 1.4
 
 
 
@@ -133,10 +135,10 @@ Rectangle {
       // This are the slopes drawing function
       property var slopes: {
           0x00 : function(tileX, tileY, HFlip, VFlip) {
-              drawBox(tileX + 16 * HFlip, tileY + 8 + 24 * VFlip, 16, 8, 'green', 'green')
+              drawBox(tileX + 16 * HFlip, tileY + 8 + 24 * VFlip, 16, 8, 'light green', 'grey')
           },
           0x12 : function(tileX, tileY, HFlip, VFlip) { // Proper drawing of slopes using the canvas API
-              dctx.strokeStyle = "light grey"
+              dctx.strokeStyle = "light green"
               dctx.fillStyle = "grey"
               dctx.moveTo(tileX, tileY + 16 * VFlip)
               dctx.lineTo(tileX + 16 * HFlip, tileY, tileY)
@@ -148,6 +150,9 @@ Rectangle {
               drawLine(tileX, tileY + 16 * VFlip, tileX + 16 * HFlip, tileY, "green")
               drawLine(tileX + 16 * HFlip, tileY, tileX + 16 * HFlip, tileY + 16 * VFlip, "green")
               drawLine(tileX, tileY + 16 * VFlip, tileX + 16 * HFlip, tileY + 16 * VFlip, "green")
+          },
+          0x13 : function(tileX, tileY, HFlip, VFlip) {
+              drawBox(tileX + 16*HFlip, tileY + 16*VFlip, 16, 16, "light green", "grey")
           }
       }
       property var outline : {
@@ -186,14 +191,18 @@ Rectangle {
 
           },
           0x02 : function(tileX, tileY) { // X-ray air
+              if (solidCheckBox.checked)
+                  return
               drawBox(tileX, tileY, 16, 16, "red")
               drawText("X", tileX + 4, tileY - 1, "red")
           },
-          0x03 : function(tileX, tileY) {
+          0x03 : function(tileX, tileY) { // Threadmill
               drawBox(tileX, tileY, 16, 16, 'rgb(170, 0, 0)', 'rgb(85, 0, 0)')
               drawText("T", tileX + 4, tileY - 1, "rgb(128, 128, 128)")
           },
           0x04 : function(tileX, tileY) { // Shootable Air
+              if (solidCheckBox.checked)
+                  return
               drawBox(tileX, tileY, 16, 16, 'rgb(0, 170, 0)')
               drawText("A", tileX + 4, tileY - 1, 'rgb(128, 128, 128)')
           },
@@ -215,12 +224,16 @@ Rectangle {
               }
           },
           0x06 : function(tileX, tileY) { // Denied X-ray
+            if (solidCheckBox.checked)
+                  return
             drawBox(tileX, tileY, 16, 16, 'rgb(180, 180, 180)', 'rgb(85, 85, 85)')
-            drawText('F', tileX + 4, tileY - 1, 'F', 'rgb(128, 128, 128)')
+            drawText('F', tileX + 4, tileY - 1,  'rgb(128, 128, 128)')
           },
           0x07 : function(tileX, tileY) { // Bombable Air? dafuq
+              if (solidCheckBox.checked)
+                  return
               drawBox(tileX, tileY, 16, 16, 1, 'rgb(0, 170, 170)', 'rgb(0, 85, 85)')
-              drawText('S', tileX + 4, tileY - 1, 'F', 'rgb(128, 128, 128)')
+              drawText('S', tileX + 4, tileY - 1, 'rgb(128, 128, 128)')
           },
           0x08 : function(tileX, tileY) { // Solid
               drawBox(tileX, tileY, 16, 16, "white", 'rgb(200, 200, 200)')
@@ -244,7 +257,7 @@ Rectangle {
           },
           0x0A : function(tileX, tileY) { // Spike
               drawBox(tileX, tileY, 16, 16, 'grey', dctx.createPattern("grey", Qt.DiagCrossPattern))
-              drawText('S', tileX + 4, tileY - 1, 'white')
+              drawText('S', tileX + 4, tileY - 1, 'yellow')
           },
           0x0B : function(tileX, tileY) { // Crumble
               drawBox(tileX, tileY, 16, 16, 'grey', dctx.createPattern("grey", Qt.DiagCrossPattern))
@@ -295,8 +308,8 @@ Rectangle {
               }
           },
           0x0E : function(tileX, tileY) { // Grapple block
-              drawBox(tileX, tileY, 16, 16, 'light blue', dctx.createPattern("light blue", Qt.DiagCrossPattern))
-              drawText('G', tileX + 4, tileY - 1, '#9fe1ff')
+              drawBox(tileX, tileY, 16, 16, 'light blue', dctx.createPattern("grey", Qt.DiagCrossPattern))
+              drawText('G', tileX + 4, tileY - 1, 'light blue')
           },
 
           0x0F : function(tileX, tileY) { // Bomb block
@@ -356,7 +369,7 @@ Rectangle {
           if (cameraY >= 10000)
               cameraY = cameraY - 65535
           var width = memory.readUnsignedWord(0x7E07A5)
-          infoSamus.text = Helper.sprintf("Samus coord : %d,%d\nCamera : %d , %d - %d", samusX, samusY, cameraX, cameraY, width)
+          infoSamus.text = Helper.sprintf("Samus coord : %d,%d\nCamera : %d , %d - Width : %d", samusX, samusY, cameraX, cameraY, width)
           dctx.font = "12px Arial"
           dctx.fillStyle = "white"
           for (y = 0; y < 28; y++)
@@ -389,6 +402,19 @@ Rectangle {
           drawBox(topleft[0], topleft[1], bottomright[0] - topleft[0], bottomright[1] - topleft[1], "aqua", p);
           console.timeEnd("Drawing")
       }
+
+      CheckBox {
+          id: solidCheckBox
+          x: 404
+          y: 39
+          style: CheckBoxStyle {
+              label : Text {
+                  color : "white"
+                  font.pixelSize: 20
+                  text : "Hide all no solid"
+              }
+          }
+      }
     }
 
     /* You need this object. It will call the OnTimerTick part every time the timer 'tick'
@@ -402,6 +428,8 @@ Rectangle {
       onInit: {
           memory.addNewCacheRange("misc", 0x7E0790, 900)
           memory.addNewCacheRange("mapinfos", 0x7F0000,  0x10000)
+          //memory.addNewCacheRange("btsmap", 0x7F6402, 0x7F9602 - 0x7F6402)
+          //memory.addNewCacheRange("tilemap", 0x7F0002, 0x6400)
           memory.readByte(0x8F8000) // Force to cache this rom bank
           //memory.refreshCache("mapinfos")
           memory.refreshCache()
@@ -413,6 +441,8 @@ Rectangle {
         console.time("tick")
         console.time("Getting Cache")
         memory.refreshCache("misc")
+        //memory.refreshCache("tilemap")
+        //memory.refreshCache("btsmap")
         console.timeEnd("Getting Cache")
         cachedWram = true
         console.info("==========NEW TICK===============")

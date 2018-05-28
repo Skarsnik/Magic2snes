@@ -24,7 +24,8 @@ windeployqt.exe --no-translations --no-system-d3d-compiler --no-opengl --no-svg 
 
 :: Clean up Qt extra stuff
 rmdir /Q /S %deployPath%\imageformats
-::del %deployPath%\opengl32sw.dll
+::This shit is  24 Meg
+del %deployPath%\opengl32sw.dll 
 ::del %deployPath%\libEGL.dll
 ::del %deployPath%\libGLESV2.dll
 
