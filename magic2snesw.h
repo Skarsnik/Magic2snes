@@ -30,7 +30,9 @@ private slots:
 
     void    onUsb2snesStateChanged();
 
-    void    onCloseEvent(QCloseEvent *event);
+    void    closeEvent(QCloseEvent *event);
+
+    void on_refreshButton_clicked();
 
 private:
     Ui::Magic2Snesw *ui;

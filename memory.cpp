@@ -101,12 +101,22 @@ qint16 Memory::readByte(unsigned int addr)
     return readMemory<qint8>(addr);
 }
 
+qint16 Memory::readSignedByte(unsigned int addr)
+{
+    return readMemory<qint8>(addr);
+}
+
 quint16 Memory::readUnsignedByte(unsigned int addr)
 {
     return (quint8) readByte(addr);
 }
 
 qint16 Memory::readWord(unsigned int addr)
+{
+    return readMemory<qint16>(addr);
+}
+
+qint16 Memory::readSignedWord(unsigned int addr)
 {
     return readMemory<qint16>(addr);
 }
@@ -118,7 +128,12 @@ quint16 Memory::readUnsignedWord(unsigned int addr)
 
 qint32 Memory::readLong(unsigned int addr)
 {
-    return readMemory<qint32>(addr, 3);
+    return readMemory<qint16>(addr);
+}
+
+qint32 Memory::readSignedLong(unsigned int addr)
+{
+    return readMemory<qint16>(addr);
 }
 
 quint32 Memory::readUnsignedLong(unsigned int addr)
@@ -128,7 +143,7 @@ quint32 Memory::readUnsignedLong(unsigned int addr)
 
 QByteArray Memory::readRange(unsigned int addr, unsigned int size)
 {
-    return usb2snes->getAddress(addr, size);
+    return usb2snes->getAddress(usb2snesLocation(addr), size);
 }
 
 
@@ -180,7 +195,7 @@ template<typename T> T Memory::readMemory(unsigned int addr, unsigned int n) {
     }
     if (pc_addr == ROMMAPPING_LOCATION_SRAM)
     {
-        sDebug() << "Reading SRAM addr" << QString::number(origAddr, 16);
+        //sDebug() << "Reading SRAM addr" << QString::number(origAddr, 16);
         addr = 0xE00000 + rommapping_sram_snes_to_pc(addr, rType, false);
         sram = true;
     }

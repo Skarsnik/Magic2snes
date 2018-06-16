@@ -67,15 +67,10 @@ var alttpitems = { "Regular Bow" : { offset : 0x40, value : 0x0002},
                    "Bug Net" : { offset : 0x4D, value : 0x0001},
                    "Book" : { offset : 0x4E, value : 0x0001},
                    "Bottle" : { offset : 0x4F, value : 0x0002},
-                   "Red Potion" : { offset : 0x4F, value : 0x0003},
-                   "Green Potion" : { offset : 0x4F, value : 0x0004},
-                   "Fairy" : { offset : 0x4F, value : 0x0005},
-                   "Bee" : { offset : 0x4F, value : 0x0006},
-                   "Gold Bee" : { offset : 0x4F, value : 0x0007},
                    "Cane of Somaria" : { offset : 0x50, value : 0x0001},
                    "Cane of Bryan" : { offset : 0x51, value : 0x0001},
                    "Cape" : { offset : 0x52, value : 0x0001},
-                   "Mirror" : { offset : 0x53, value : 0x0001},
+                   "Mirror" : { offset : 0x53, value : 0x0002},
                    "Gloves" : { offset : 0x54, value : 0x0001},
                    "Titan Mitts" : { offset : 0x54, value : 0x0002},
                    "Pegasus Boots" : { offset : 0x55, value : 0x0001},
@@ -93,10 +88,25 @@ var alttpitems = { "Regular Bow" : { offset : 0x40, value : 0x0002},
                    "Half Magic" : { offset : 0x7B, value : 0x0001},
                    "Quarter Magic" : { offset : 0x7B, value : 0x0002}
                          };
-var alttpammos = {  "Bombs" : {offsetmax : 0x70, offset : 0x75, base : 10},
-                     "Arrows" : {offsetmax : 0x71, offset : 0x76, base : 30},
-                     "Rupees" : {offsetmax : 0,  offset : 0x60, base : 0}
+var alttpammos = {  "Bombs" : {offsetmax : 0x70, offset : 0x43, base : 10},
+                     "Arrows" : {offsetmax : 0x71, offset : 0x77, base : 30},
+                     "Rupees" : {offsetmax : 0,  offset : 0x60, base : 0},
+                     "Hearts" : {offsetmax : 0x6C, offset : 0x6D, base : 0}
                          };
+
+var bottleContentName = [
+    "No Bottle",
+    "Nop",
+    "Empty Bottle",
+    "Red Potion",
+    "Green Potion",
+    "Blue Potion",
+    "Fairy",
+    "Bee",
+    "Gold Bee"
+]
+
+var alttpBottlesArrayOffset = 0x5C
 
 var smLocation
 var alttpLocation
@@ -163,7 +173,12 @@ function linkHas(what) {
 }
 
 function linkAmmo(what) {
-    var ammo = { max : memory.readUnsignedByte(alttpLocation + alttpammos[what].offsetmax + alttpammos[what].base),
+    if (!(what in alttpammos))
+    {
+        console.error("key not found in alttp ammos tab : ", what)
+        return;
+    }
+    var ammo = { max : memory.readUnsignedByte(alttpLocation + alttpammos[what].offsetmax) + alttpammos[what].base,
                  cur : memory.readUnsignedByte(alttpLocation + alttpammos[what].offset)
     }
     return ammo
@@ -176,6 +191,20 @@ function getAlttpItemValue(what) {
         return;
     }
     return memory.readUnsignedByte(alttpLocation + alttpitems[what].offset)
+}
+
+function linkBottles() {
+    var bottles = new Array(4)
+    var pikomem
+
+    for (var i = 0; i < 4; i++)
+    {
+        pikomem = memory.readUnsignedByte(alttpLocation + alttpBottlesArrayOffset + i)
+        bottles[i] = {value : pikomem,
+                      text : bottleContentName[pikomem]
+        }
+    }
+    return bottles
 }
 
 function getSamusData() {
@@ -225,6 +254,8 @@ function getSamusData() {
 function getLinkData() {
     var linkArrow = linkAmmo("Arrows")
     var linkBombs = linkAmmo("Bombs")
+    var linkHearts = linkAmmo("Hearts")
+    //console.log("AZrrow", linkArrow.cur, linkArrow.max)
     var link = {
         swordlvl : getAlttpItemValue("Master Sword"),
         weapons : { bow : getAlttpItemValue("Regular Bow"),
@@ -254,11 +285,21 @@ function getLinkData() {
         tunic : getAlttpItemValue("Red Mail"),
         shield : getAlttpItemValue("Shield"),
         halfmagic : getAlttpItemValue("Half Magic"),
+        mirror : linkHas("Mirror"),
 
         rupees : memory.readUnsignedWord(alttpLocation + alttpammos["Rupees"].offset),
         arrows : {max : linkArrow.max, current : linkArrow.cur},
-        bombs : {max : linkBombs.max, current : linkBombs.cur}
+        bombs : {max : linkBombs.max, current : linkBombs.cur},
+        hearts : {max : linkHearts.max / 8, current : linkHearts.cur / 8},
+        bottles : linkBottles(),
+        nbBottles : 0
     }
+    var pikocpt = 0
+    for (var i = 0; i < 4; i++) {
+        if (link.bottles[i].value !== 0)
+            pikocpt++
+    }
+    link.nbBottles = pikocpt
     return link
 }
 

@@ -21,11 +21,17 @@ public slots:
     void            setRomMapping(QString mappingName);
     void            cacheWram();
     void            refreshCache(QString name = QString());
+
     qint16          readByte(unsigned int addr);
+    qint16          readSignedByte(unsigned int addr);
     quint16         readUnsignedByte(unsigned int addr);
+
     qint16          readWord(unsigned int addr);
+    qint16          readSignedWord(unsigned int addr);
     quint16         readUnsignedWord(unsigned int addr);
+
     qint32          readLong(unsigned int addr);
+    qint32          readSignedLong(unsigned int addr);
     quint32         readUnsignedLong(unsigned int addr);
     QByteArray      readRange(unsigned int addr, unsigned int size);
     bool            addNewCacheRange(QString name, unsigned int start, unsigned int size);

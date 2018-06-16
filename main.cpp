@@ -33,6 +33,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     Magic2Snesw w;
     QDockWidget dw(&w);
+    dw.setObjectName("ConsoleDock");
     debugConsole = new DebugConsole();
     dw.setWidget(debugConsole);
     dw.setWindowTitle("Debug Console");

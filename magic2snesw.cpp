@@ -58,6 +58,9 @@ void Magic2Snesw::on_runScriptButton_clicked()
         qmlViewer->setSource(QUrl());
         qmlViewer->engine()->clearComponentCache();
     }
+    QFileInfo fi(scriptFile);
+    /*qmlViewer->engine()->addImportPath(fi.absolutePath());
+    qDebug() << qmlViewer->engine()->importPathList();*/
     qmlViewer->setSource(QUrl::fromLocalFile(scriptFile));
     if (!qmlViewer->errors().empty())
     {
@@ -119,14 +122,34 @@ void Magic2Snesw::on_exitButton_clicked()
 
 void Magic2Snesw::onUsb2snesStateChanged()
 {
+    if (usb2snes->state() == USB2snes::Connected)
+    {
+        ui->statusLabel->setText("Connected to usb2snes webserver");
+    }
     if (usb2snes->state() == USB2snes::Ready)
+    {
         ui->runScriptButton->setEnabled(true);
+        ui->statusLabel->setText("READY - " + usb2snes->firmwareString() + " - " + usb2snes->infos()[2]);
+    }
     if (usb2snes->state() == USB2snes::None)
+    {
         ui->runScriptButton->setEnabled(false);
+        ui->statusLabel->setText("Not connected to USB2Snes webserver");
+    }
 }
 
-void Magic2Snesw::onCloseEvent(QCloseEvent *event)
+void Magic2Snesw::closeEvent(QCloseEvent *event)
 {
+    sDebug() << "Closing Event";
+    Q_UNUSED(event)
     m_settings->setValue("windowState", saveState());
     m_settings->setValue("windowGeometry", saveGeometry());
+}
+
+void Magic2Snesw::on_refreshButton_clicked()
+{
+    if (usb2snes->state() == USB2snes::None)
+        usb2snes->connect();
+    if (usb2snes->state() == USB2snes::Ready)
+      ui->statusLabel->setText("READY - " + usb2snes->firmwareString() + " - " + usb2snes->infos()[2]);
 }
