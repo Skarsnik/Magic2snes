@@ -172,9 +172,10 @@ void USB2snes::onWebSocketBinaryReceived(QByteArray message)
     static QByteArray buffer;
     if (message.size() < 100)
       sDebug() << "<<B" << message.toHex('-') << message;
-    /*else
-      sDebug() << "<<B" << "Received " << message.size() << " byte of data";*/
+    else
+      sDebug() << "<<B" << "Received " << message.size() << " byte of data";
     buffer.append(message);
+    sDebug() << "requested" << requestedBinaryReadSize <<  "received : " << buffer.size();
     if ((unsigned int) buffer.size() == requestedBinaryReadSize)
     {
         lastBinaryMessage = buffer;

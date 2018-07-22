@@ -130,6 +130,7 @@ void Magic2Snesw::onUsb2snesStateChanged()
     {
         ui->runScriptButton->setEnabled(true);
         ui->statusLabel->setText("READY - " + usb2snes->firmwareString() + " - " + usb2snes->infos()[2]);
+        usb2snes->setAppName("Magic2Snes");
     }
     if (usb2snes->state() == USB2snes::None)
     {

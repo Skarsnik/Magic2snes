@@ -38,6 +38,7 @@ Rectangle {
     USB2Snes {
       id : usb2snes
       objectName: "usb2snes" // Don't change this
+      windowTitle: "Super Metroid - In game timer" // The WindowTitle
       timer : 100 // The interval timer value in ms. A frame is around 16 ms
 
       /* Main Code is actually here */
