@@ -235,6 +235,7 @@ Rectangle {
 
             Engine.refreshData()
             //gameRunning.text = Helper.sprintf("Current game running is %s", Engine.gameRunning)
+
             var samus = Engine.getSamusData()
             smMisc.setProperty(0, "owned", samus.morphball)
             smMisc.setProperty(1, "owned", samus.bombs)

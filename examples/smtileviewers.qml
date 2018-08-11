@@ -137,6 +137,9 @@ Rectangle {
           0x00 : function(tileX, tileY, HFlip, VFlip) {
               drawBox(tileX + 16 * HFlip, tileY + 8 + 24 * VFlip, 16, 8, 'light green', 'grey')
           },
+          0x02 : function(tileX, tileY, HFlip, VFlip) {
+              drawBox(tileX + 8 + 24 * HFlip, tileY + 8 + 24 * VFlip, 8, 8, "light green", "gray")
+          },
           0x12 : function(tileX, tileY, HFlip, VFlip) { // Proper drawing of slopes using the canvas API
               dctx.strokeStyle = "light green"
               dctx.fillStyle = "grey"
@@ -146,14 +149,21 @@ Rectangle {
               dctx.lineTo(tileX, tileY + 16 * VFlip)
               dctx.fill()
               dctx.stroke()
-              return // or you just want the outline
-              drawLine(tileX, tileY + 16 * VFlip, tileX + 16 * HFlip, tileY, "green")
-              drawLine(tileX + 16 * HFlip, tileY, tileX + 16 * HFlip, tileY + 16 * VFlip, "green")
-              drawLine(tileX, tileY + 16 * VFlip, tileX + 16 * HFlip, tileY + 16 * VFlip, "green")
-          },
+           },
           0x13 : function(tileX, tileY, HFlip, VFlip) {
-              drawBox(tileX + 16*HFlip, tileY + 16*VFlip, 16, 16, "light green", "grey")
+              drawBox(tileX + 16 * HFlip, tileY + 16 * VFlip, 16, 16, "light green", "grey")
+          },
+          0x14 : function(tileX, tileY, HFlip, VFlip) {
+              dctx.strokeStyle = "light green"
+              dctx.fillStyle = "grey"
+              dctx.moveTo(tileX + 8 * HFlip, tileY + 16 * VFlip)
+              dctx.lineTo(tileX + 16 * HFlip, tileY + 8 * VFlip)
+              dctx.lineTo(tileX + 16 * HFlip, tileY + 16 * VFlip)
+              dctx.lineTo(tileX + 8 * HFlip, tileY + 16 * VFlip)
+              dctx.fill()
+              dctx.stroke()
           }
+
       }
       property var outline : {
           0x00 : function(tileX, tileY) {

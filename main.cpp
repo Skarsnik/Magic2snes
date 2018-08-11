@@ -38,6 +38,11 @@ int main(int argc, char *argv[])
     dw.setWidget(debugConsole);
     dw.setWindowTitle("Debug Console");
     w.addDockWidget(Qt::BottomDockWidgetArea, &dw);
-    w.show();
+    if (a.arguments().size() > 1)
+    {
+        w.setAndRunScript(a.arguments().at(1));
+    } else {
+        w.show();
+    }
     return a.exec();
 }

@@ -41,11 +41,18 @@ Magic2Snesw::Magic2Snesw(QWidget *parent) :
     memory = new Memory();
     memory->setUsb2snes(usb2snes);
     bit = new Bit();
+    autoRun = false;
 }
 
 Magic2Snesw::~Magic2Snesw()
 {
     delete ui;
+}
+
+void Magic2Snesw::setAndRunScript(QString script)
+{
+    scriptFile = script;
+    autoRun = true;
 }
 
 void Magic2Snesw::on_runScriptButton_clicked()
@@ -131,6 +138,8 @@ void Magic2Snesw::onUsb2snesStateChanged()
         ui->runScriptButton->setEnabled(true);
         ui->statusLabel->setText("READY - " + usb2snes->firmwareString() + " - " + usb2snes->infos()[2]);
         usb2snes->setAppName("Magic2Snes");
+        if (autoRun)
+            on_runScriptButton_clicked();
     }
     if (usb2snes->state() == USB2snes::None)
     {

@@ -18,6 +18,7 @@ class Magic2Snesw : public QMainWindow
 public:
     explicit Magic2Snesw(QWidget *parent = 0);
     ~Magic2Snesw();
+    void    setAndRunScript(QString script);
 
 private slots:
     void on_runScriptButton_clicked();
@@ -41,7 +42,8 @@ private:
     USB2snes*       usb2snes;
     Memory*         memory;
     Bit*            bit;
-    QSettings*       m_settings;
+    bool            autoRun;
+    QSettings*      m_settings;
 };
 
 #endif // MAGIC2SNESW_H
