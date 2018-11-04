@@ -29,6 +29,7 @@ void    myMessageOutput(QtMsgType type, const QMessageLogContext &context, const
 
 int main(int argc, char *argv[])
 {
+    QLoggingCategory::setFilterRules("qt.scenegraph.general=true");
     qInstallMessageHandler(myMessageOutput);
     QApplication a(argc, argv);
     Magic2Snesw w;

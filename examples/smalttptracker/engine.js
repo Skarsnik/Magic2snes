@@ -123,6 +123,7 @@ function init() {
 
 function refreshData() {
     var alttprun = memory.readUnsignedWord(lalttpRunning)
+    console.log(alttprun)
     if (alttprun === 0) // alttp is running
     {
         smLocation = lSMSRAM

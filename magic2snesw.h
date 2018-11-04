@@ -44,6 +44,7 @@ private:
     Bit*            bit;
     bool            autoRun;
     QSettings*      m_settings;
+    bool            scriptRunning;
 };
 
 #endif // MAGIC2SNESW_H

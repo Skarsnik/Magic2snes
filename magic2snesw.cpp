@@ -42,6 +42,7 @@ Magic2Snesw::Magic2Snesw(QWidget *parent) :
     memory->setUsb2snes(usb2snes);
     bit = new Bit();
     autoRun = false;
+    scriptRunning = false;
 }
 
 Magic2Snesw::~Magic2Snesw()
@@ -94,6 +95,7 @@ void Magic2Snesw::on_runScriptButton_clicked()
     memory->clearCache();
     memory->resumeWork();
     musb->startTimer();
+    scriptRunning = true;
     qmlViewer->show();
 }
 
@@ -117,6 +119,7 @@ void Magic2Snesw::on_qmlViewClosing(QQuickCloseEvent *)
     usb2snes->abortOp();
     memory->stopWork();
     musb->stopTimer();
+    scriptRunning = false;
     QThread::usleep(200);
     obj->deleteLater();
 
@@ -132,6 +135,14 @@ void Magic2Snesw::onUsb2snesStateChanged()
     if (usb2snes->state() == USB2snes::Connected)
     {
         ui->statusLabel->setText("Connected to usb2snes webserver");
+        if (scriptRunning)
+        {
+            QQuickItem* obj = qmlViewer->rootObject();
+            MagicUSB2Snes* musb = obj->findChild<MagicUSB2Snes*>("usb2snes");
+            memory->clearCache();
+            memory->resumeWork();
+            musb->startTimer();
+        }
     }
     if (usb2snes->state() == USB2snes::Ready)
     {
@@ -145,6 +156,14 @@ void Magic2Snesw::onUsb2snesStateChanged()
     {
         ui->runScriptButton->setEnabled(false);
         ui->statusLabel->setText("Not connected to USB2Snes webserver");
+        if (scriptRunning)
+        {
+            QQuickItem* obj = qmlViewer->rootObject();
+            MagicUSB2Snes* musb = obj->findChild<MagicUSB2Snes*>("usb2snes");
+            usb2snes->abortOp();
+            memory->stopWork();
+            musb->stopTimer();
+        }
     }
 }
 

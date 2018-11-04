@@ -10,6 +10,7 @@ MagicUSB2Snes::MagicUSB2Snes(QObject *parent) : QObject(parent)
     m_timer = 100;
     stopRunning = false;
     sDebug() << "Magic2usbsnes created";
+    m_showStatus = true;
 }
 
 MagicUSB2Snes::~MagicUSB2Snes()
@@ -28,6 +29,7 @@ void MagicUSB2Snes::startTimer()
     sDebug() << "Init";
     emit init();
     sDebug() << "Starting timer";
+    stopRunning = false;
     qtimer.setInterval(m_timer);
     qtimer.start(m_timer);
 }
@@ -49,6 +51,11 @@ QString MagicUSB2Snes::windowTitle() const
     return m_windowTitle;
 }
 
+bool MagicUSB2Snes::showStatus() const
+{
+    return m_showStatus;
+}
+
 void MagicUSB2Snes::setTimer(int timer)
 {
     if (m_timer == timer)
@@ -67,6 +74,15 @@ void MagicUSB2Snes::setWindowTitle(QString windowTitle)
         m_windowTitle = windowTitle;
         emit windowTitleChanged(m_windowTitle);
     }
+}
+
+void MagicUSB2Snes::setShowStatus(bool showStatus)
+{
+    if (m_showStatus == showStatus)
+        return;
+
+    m_showStatus = showStatus;
+    emit showStatutChanged(m_showStatus);
 }
 
 void MagicUSB2Snes::m_timerTick()
