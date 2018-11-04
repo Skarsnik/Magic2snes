@@ -36,6 +36,8 @@ Magic2Snesw::Magic2Snesw(QWidget *parent) :
          restoreState(m_settings->value("windowState").toByteArray());
     }
     //scriptFile = "D:/Project/Magic2snes/examples/smigtimer.qml";
+    reco_timer.setInterval(3000);
+    connect(&reco_timer, SIGNAL(timeout()), this, SLOT(onRecoTimerTick()));
     connect(qmlViewer, SIGNAL(closing(QQuickCloseEvent*)), this, SLOT(on_qmlViewClosing(QQuickCloseEvent*)));
     connect(usb2snes, SIGNAL(stateChanged()), this, SLOT(onUsb2snesStateChanged()));
     memory = new Memory();
@@ -54,6 +56,11 @@ void Magic2Snesw::setAndRunScript(QString script)
 {
     scriptFile = script;
     autoRun = true;
+}
+
+void Magic2Snesw::onRecoTimerTick()
+{
+    usb2snes->connect();
 }
 
 void Magic2Snesw::on_runScriptButton_clicked()
@@ -90,6 +97,7 @@ void Magic2Snesw::on_runScriptButton_clicked()
     qmlViewer->setTitle("Magic2snes - " + scriptFile);
     MagicUSB2Snes* musb = obj->findChild<MagicUSB2Snes*>("usb2snes");
     //musb->setUSB2Snes(usb2snes);
+    //musb->setEngine(qmlViewer->engine());
     if (!musb->windowTitle().isEmpty())
         qmlViewer->setTitle(musb->windowTitle());
     memory->clearCache();
@@ -135,6 +143,12 @@ void Magic2Snesw::onUsb2snesStateChanged()
     if (usb2snes->state() == USB2snes::Connected)
     {
         ui->statusLabel->setText("Connected to usb2snes webserver");
+    }
+    if (usb2snes->state() == USB2snes::Ready)
+    {
+        ui->runScriptButton->setEnabled(true);
+        ui->statusLabel->setText("READY - " + usb2snes->firmwareString() + " - " + usb2snes->infos()[2]);
+        usb2snes->setAppName("Magic2Snes");
         if (scriptRunning)
         {
             QQuickItem* obj = qmlViewer->rootObject();
@@ -143,13 +157,7 @@ void Magic2Snesw::onUsb2snesStateChanged()
             memory->resumeWork();
             musb->startTimer();
         }
-    }
-    if (usb2snes->state() == USB2snes::Ready)
-    {
-        ui->runScriptButton->setEnabled(true);
-        ui->statusLabel->setText("READY - " + usb2snes->firmwareString() + " - " + usb2snes->infos()[2]);
-        usb2snes->setAppName("Magic2Snes");
-        if (autoRun)
+        if (autoRun && !scriptRunning)
             on_runScriptButton_clicked();
     }
     if (usb2snes->state() == USB2snes::None)
@@ -164,6 +172,8 @@ void Magic2Snesw::onUsb2snesStateChanged()
             memory->stopWork();
             musb->stopTimer();
         }
+        if (autoRun)
+            reco_timer.start();
     }
 }
 

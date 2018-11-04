@@ -41,6 +41,7 @@ int main(int argc, char *argv[])
     w.addDockWidget(Qt::BottomDockWidgetArea, &dw);
     if (a.arguments().size() > 1)
     {
+        //w.setAndRunScript("F:/Project/Magic2Snes/script/Soul Blazer Tracker/SoulBlazerTracker.qml");
         w.setAndRunScript(a.arguments().at(1));
     } else {
         w.show();

@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/qml">
+        <file>USB2SnesStatus.qml</file>
+    </qresource>
+</RCC>

@@ -1,9 +1,12 @@
 #include "magicusb2snes.h"
+#include <QQmlComponent>
+#include <QQmlEngine>
+#include <QQmlContext>
 
 Q_LOGGING_CATEGORY(log_magic2snes, "Magic2Snes")
 #define sDebug() qCDebug(log_magic2snes)
 
-MagicUSB2Snes::MagicUSB2Snes(QObject *parent) : QObject(parent)
+MagicUSB2Snes::MagicUSB2Snes(QQuickItem *parent) : QQuickItem(parent)
 {
     //usb2snes = NULL;
     connect(&qtimer, SIGNAL(timeout()), this, SLOT(m_timerTick()));
@@ -22,6 +25,19 @@ void MagicUSB2Snes::setUSB2Snes(USB2snes *usnes)
 {
     sDebug() << "Set USB2snes";
     //usb2snes = usnes;
+}
+
+void MagicUSB2Snes::setEngine(QQmlEngine *engine)
+{
+    sDebug() << "Creating component";
+    QQmlComponent component(qmlContext(this)->engine(), QUrl("qrc:///qml/USB2SnesStatus.qml"));
+    sDebug() << component.errorString();
+    statusObj = component.create(qmlContext(parentItem()));
+    sDebug() << parentItem()->property("color");
+    //statusObj->setProperty("visible", true);
+    statusObj->setProperty("width", parentItem()->property("width").toInt());
+    statusObj->setProperty("height", parentItem()->property("height").toInt());
+    sDebug() <<  statusObj->property("width");
 }
 
 void MagicUSB2Snes::startTimer()

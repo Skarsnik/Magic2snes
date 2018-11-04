@@ -51,8 +51,10 @@ FORMS += \
 RC_FILE = magic2snes.rc
 
 RESOURCES += \
-    jshelper.qrc
+    jshelper.qrc \
+    qmlfiles.qrc
 
 DISTFILES += \
-    magic2snes.rc
+    magic2snes.rc \
+    USB2SnesStatus.qml
 

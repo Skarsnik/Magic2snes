@@ -21,6 +21,8 @@ public:
     void    setAndRunScript(QString script);
 
 private slots:
+    void    onRecoTimerTick();
+
     void on_runScriptButton_clicked();
 
     void on_chooseScriptButton_clicked();
@@ -45,6 +47,7 @@ private:
     bool            autoRun;
     QSettings*      m_settings;
     bool            scriptRunning;
+    QTimer          reco_timer;
 };
 
 #endif // MAGIC2SNESW_H
