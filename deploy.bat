@@ -12,7 +12,7 @@ mkdir %deployPath%
 mkdir %compilePath%
 cd %compilePath%
 cd
-::set QMAKE_MSC_VER=1910
+
 qmake %projectPath%\Magic2Snes.pro -spec win32-msvc "CONFIG+=release"
 nmake
 

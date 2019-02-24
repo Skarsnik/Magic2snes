@@ -6,10 +6,16 @@ import QtQuick.Layouts 1.3
 
 
 Rectangle {
-    width: 300
-    height: 300
+    width: 285
+    height: 260
     id : window
     color : "black"
+
+
+    FontLoader {
+        id: iogFont
+        source: "lunchds.ttf"
+    }
 
     property var idToObject: {
         1 : swordOfLife,
@@ -56,6 +62,7 @@ Rectangle {
 
     function setMinimalMode()
     {
+        stoneRow.visible = false;
         braceletRow.visible = false;
         luckyBlade.parent = miniItemRow;
         zantetsuSword.parent = miniItemRow;
@@ -88,12 +95,10 @@ Rectangle {
 
         miniItemRow.parent = miniCol;
         phoenixRow.parent = miniCol;
-        stoneRow.parent = miniCol;
+        //stoneRow.parent = miniCol;
         miniStuffRow.parent = miniCol;
         npcRow.parent = miniCol;
-
-
-
+        counterRow.parent = miniCol;
     }
 
     USB2Snes {
@@ -124,10 +129,16 @@ Rectangle {
                 idToObject[p].owned = false;
             }
 
+            stoneCounter.count = 0
+            emblemCounter.count = 0
             for (var k in items)
             {
                 if (idToObject.hasOwnProperty(k))
                     idToObject[k].owned = true
+                if (k <= 0x3F && k >= 0x3A)
+                    stoneCounter.count++
+                if (k <= 0x31 && k >= 0x2A)
+                    emblemCounter.count++
             }
         }
     }
@@ -144,6 +155,10 @@ Rectangle {
 
     Column {
         id: miniCol
+        anchors.top: parent.top
+        anchors.topMargin: 2
+        anchors.left: parent.left
+        anchors.leftMargin: 2
         spacing: 4
     }
     TrackerImage {
@@ -249,27 +264,27 @@ Rectangle {
             id : pikoItem
             width : 45
             height: 45
-        TrackerImage {
-            id: blackStone
-            width: 45
-            height: 45
-            owned: false
-            source: "Images/SB_Items_Black_Stone.png"
-            onOwnedChanged: {
-                console.debug("Piko")
-                if (owned)
-                    blackStoneEffect.visible = true;
-                else
-                    blackStoneEffect.visible = false;
+            TrackerImage {
+                id: blackStone
+                width: 45
+                height: 45
+                owned: false
+                source: "Images/SB_Items_Black_Stone.png"
+                onOwnedChanged: {
+                    console.debug("Piko")
+                    if (owned)
+                        blackStoneEffect.visible = true;
+                    else
+                        blackStoneEffect.visible = false;
+                }
             }
-        }
-        BrightnessContrast {
-            anchors.fill: blackStone
-            id : blackStoneEffect
-            brightness: -0.5
-            source : blackStone
-            visible: false
-        }
+            BrightnessContrast {
+                anchors.fill: blackStone
+                id : blackStoneEffect
+                brightness: -0.5
+                source : blackStone
+                visible: false
+            }
         }
     }
 
@@ -280,58 +295,58 @@ Rectangle {
         spacing: 2
     }
 
-        TrackerImage {
-            id: swordOfLife
-            width: 45
-            height: 45
-            visible: false
-            source: "Images/SB_Weapon_Sword_of_Life.png"
-        }
-        TrackerImage {
-            id: psychoSword
-            width: 45
-            height: 45
-            visible: false
-            source: "Images/SB_Weapon_Psycho_Sword.png"
-        }
-        TrackerImage {
-            id: criticalSword
-            width: 45
-            height: 45
-            visible: false
-            source: "Images/SB_Weapon_Critical_Sword.png"
-        }
-        TrackerImage {
-            id: luckyBlade
-            width: 45
-            height: 45
-            source: "Images/SB_Weapon_Lucky_Blade.png"
-        }
-        TrackerImage {
-            id: zantetsuSword
-            width: 45
-            height: 45
-            source: "Images/SB_Weapon_Zantetsu_Sword.png"
-        }
-        TrackerImage {
-            id: spiritSword
-            width: 45
-            height: 45
-            source: "Images/SB_Weapon_Spirit_Sword.png"
-        }
-        TrackerImage {
-            id: recoverySword
-            width: 45
-            height: 45
-            visible: false
-            source: "Images/SB_Weapon_Recovery_Sword.png"
-        }
-        TrackerImage {
-            id: soulBlade
-            width: 45
-            height: 45
-            source: "Images/SB_Weapon_The_Soul_Blade.png"
-        }
+    TrackerImage {
+        id: swordOfLife
+        width: 45
+        height: 45
+        visible: false
+        source: "Images/SB_Weapon_Sword_of_Life.png"
+    }
+    TrackerImage {
+        id: psychoSword
+        width: 45
+        height: 45
+        visible: false
+        source: "Images/SB_Weapon_Psycho_Sword.png"
+    }
+    TrackerImage {
+        id: criticalSword
+        width: 45
+        height: 45
+        visible: false
+        source: "Images/SB_Weapon_Critical_Sword.png"
+    }
+    TrackerImage {
+        id: luckyBlade
+        width: 45
+        height: 45
+        source: "Images/SB_Weapon_Lucky_Blade.png"
+    }
+    TrackerImage {
+        id: zantetsuSword
+        width: 45
+        height: 45
+        source: "Images/SB_Weapon_Zantetsu_Sword.png"
+    }
+    TrackerImage {
+        id: spiritSword
+        width: 45
+        height: 45
+        source: "Images/SB_Weapon_Spirit_Sword.png"
+    }
+    TrackerImage {
+        id: recoverySword
+        width: 45
+        height: 45
+        visible: false
+        source: "Images/SB_Weapon_Recovery_Sword.png"
+    }
+    TrackerImage {
+        id: soulBlade
+        width: 45
+        height: 45
+        source: "Images/SB_Weapon_The_Soul_Blade.png"
+    }
 
 
     Row {
@@ -342,59 +357,59 @@ Rectangle {
 
     }
     TrackerImage {
-            id: ironArmor
-            width: 45
-            height: 45
-            visible: false
-            source: "Images/SB_Armor_Iron_Armor.png"
-        }
-        TrackerImage {
-            id: iceArmor
-            width: 45
-            height: 45
-            visible: false
-            source: "Images/SB_Armor_Ice_Armor.png"
-        }
-        TrackerImage {
-            id: bubbleArmor
-            width: 45
-            height: 45
-            source: "Images/SB_Armor_Bubble_Armor.png"
-        }
-        TrackerImage {
-            id: magicArmor
-            width: 45
-            height: 45
-            visible: false
-            source: "Images/SB_Armor_Magic_Armor.png"
-        }
-        TrackerImage {
-            id: mysticArmor
-            width: 45
-            height: 45
-            visible: false
-            source: "Images/SB_Armor_Mystic_Armor.png"
-        }
-        TrackerImage {
-            id: lightArmor
-            width: 45
-            height: 45
-            visible: false
-            source: "Images/SB_Armor_Light_Armor.png"
-        }
-        TrackerImage {
-            id: elementalMail
-            width: 45
-            height: 45
-            visible: false
-            source: "Images/SB_Armor_Elemental_Mail.png"
-        }
-        TrackerImage {
-            id: soulArmor
-            width: 45
-            height: 45
-            source: "Images/SB_Armor_Soul_Armor.png"
-        }
+        id: ironArmor
+        width: 45
+        height: 45
+        visible: false
+        source: "Images/SB_Armor_Iron_Armor.png"
+    }
+    TrackerImage {
+        id: iceArmor
+        width: 45
+        height: 45
+        visible: false
+        source: "Images/SB_Armor_Ice_Armor.png"
+    }
+    TrackerImage {
+        id: bubbleArmor
+        width: 45
+        height: 45
+        source: "Images/SB_Armor_Bubble_Armor.png"
+    }
+    TrackerImage {
+        id: magicArmor
+        width: 45
+        height: 45
+        visible: false
+        source: "Images/SB_Armor_Magic_Armor.png"
+    }
+    TrackerImage {
+        id: mysticArmor
+        width: 45
+        height: 45
+        visible: false
+        source: "Images/SB_Armor_Mystic_Armor.png"
+    }
+    TrackerImage {
+        id: lightArmor
+        width: 45
+        height: 45
+        visible: false
+        source: "Images/SB_Armor_Light_Armor.png"
+    }
+    TrackerImage {
+        id: elementalMail
+        width: 45
+        height: 45
+        visible: false
+        source: "Images/SB_Armor_Elemental_Mail.png"
+    }
+    TrackerImage {
+        id: soulArmor
+        width: 45
+        height: 45
+        source: "Images/SB_Armor_Soul_Armor.png"
+    }
 
     TrackerImage {
         id: magicPhoenix
@@ -408,42 +423,42 @@ Rectangle {
         height: 45
         spacing: 2
     }
-        TrackerImage {
-            id: dreamRod
-            width: 45
-            height: 45
-            source: "Images/SB_Items_Dream_Rod.png"
-        }
-        TrackerImage {
-            id: greenLeaves
-            width: 45
-            height: 45
-            source: "Images/SB_Items_Leaves.png"
-        }
-        TrackerImage {
-            id: leoBrush
-            width: 45
-            height: 45
-            source: "Images/SB_Items_Leos_Brush.png"
-        }
-        TrackerImage {
-            id: mushroomShoes
-            width: 45
-            height: 45
-            source: "Images/SB_Items_Mushroom_Shoes.png"
-        }
-        TrackerImage {
-            id: platinumCard
-            width: 45
-            height: 45
-            source: "Images/SB_Items_Platinum_Card.png"
-        }
-        TrackerImage {
-            id: vipCard
-            width: 45
-            height: 45
-            source: "Images/SB_Items_VIP_Card.png"
-        }
+    TrackerImage {
+        id: dreamRod
+        width: 45
+        height: 45
+        source: "Images/SB_Items_Dream_Rod.png"
+    }
+    TrackerImage {
+        id: greenLeaves
+        width: 45
+        height: 45
+        source: "Images/SB_Items_Leaves.png"
+    }
+    TrackerImage {
+        id: leoBrush
+        width: 45
+        height: 45
+        source: "Images/SB_Items_Leos_Brush.png"
+    }
+    TrackerImage {
+        id: mushroomShoes
+        width: 45
+        height: 45
+        source: "Images/SB_Items_Mushroom_Shoes.png"
+    }
+    TrackerImage {
+        id: platinumCard
+        width: 45
+        height: 45
+        source: "Images/SB_Items_Platinum_Card.png"
+    }
+    TrackerImage {
+        id: vipCard
+        width: 45
+        height: 45
+        source: "Images/SB_Items_VIP_Card.png"
+    }
 
     Row {
         id: phoenixRow
@@ -451,30 +466,31 @@ Rectangle {
         height: 45
         spacing: 2
     }
-        TrackerImage {
-            id: redHotMirror
-            width: 45
-            height: 45
-            source: "Images/SB_Items_Red-Hot_Mirror.png"
-        }
-        TrackerImage {
-            id: redHotStick
-            width: 45
-            height: 45
-            source: "Images/SB_Items_Red-Hot_Stick.png"
-        }
-        TrackerImage {
-            id: redHotBall
-            width: 45
-            height: 45
-            source: "Images/SB_Items_Red-Hot_Ball.png"
-        }
+    TrackerImage {
+        id: redHotMirror
+        width: 45
+        height: 45
+        source: "Images/SB_Items_Red-Hot_Mirror.png"
+    }
+    TrackerImage {
+        id: redHotStick
+        width: 45
+        height: 45
+        source: "Images/SB_Items_Red-Hot_Stick.png"
+    }
+    TrackerImage {
+        id: redHotBall
+        width: 45
+        height: 45
+        source: "Images/SB_Items_Red-Hot_Ball.png"
+    }
 
     Row {
         id: braceletRow
         width: 225
         height: 61
         spacing: 2
+        visible: false
         TrackerImage {
             id: powerBracelet
             width: 45
@@ -495,11 +511,46 @@ Rectangle {
         }
     }
 
+    Row {
+        id: counterRow
+        y: 95
+        width: 285
+        height: 56
+        anchors.left: parent.left
+        anchors.leftMargin: 0
+        spacing: width - (stoneCounter.width + emblemCounter.width)
+
+        ItemCounter {
+            id: stoneCounter
+            width: 120
+            height: 45
+            color: "#00ff00"
+            fontFamily: iogFont.name
+            countMax: 6
+            count: 0
+            source: "Images/SB_Items_Silver_Stone.png"
+        }
+
+        ItemCounter {
+            id: emblemCounter
+            width: 120
+            height: 45
+            color: "#00ff00"
+            //anchors.right: parent.right
+            //anchors.rightMargin: 0
+            fontFamily: iogFont.name
+            countMax: 8
+            source: "Images/SB_Items_Emblem_A.png"
+        }
+
+
+    }
+
 
 }
 
 /*##^## Designer {
-    D{i:13;invisible:true}D{i:14;invisible:true}D{i:15;invisible:true}D{i:31;invisible:true}
-D{i:42;invisible:true}
+    D{i:13;invisible:true}D{i:14;invisible:true}D{i:31;invisible:true}D{i:42;invisible:true}
+D{i:89;anchors_x:0}
 }
  ##^##*/

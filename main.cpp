@@ -3,14 +3,14 @@
 #include <QDockWidget>
 #include <QApplication>
 
-DebugConsole* debugConsole = NULL;
+DebugConsole* debugConsole = nullptr;
 static QTextStream cout(stdout);
 
 
 void    myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
     if (QString(context.category) == "default")
-        if (debugConsole != NULL)
+        if (debugConsole != nullptr)
             debugConsole->appendText(msg);
     if (QString(context.category) == "js" || QString(context.category) == "qml")
     {
