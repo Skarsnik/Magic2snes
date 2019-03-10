@@ -4,11 +4,12 @@ import "qrc:/extrajs.js" as Helper // Some extra javascript function
 import "engine.js" as Engine
 import QtQuick.Layouts 1.0
 
-//import "AlttpItemListView.qml" // This please the designed, should not be needed
+//import "AlttpItemListView.qml" // This please the designer, should not be needed
 //import "SMItemListView.qml"
 
 
 Rectangle {
+    id : mainWin;
     width : 262
     height: 579
 
@@ -232,7 +233,6 @@ Rectangle {
         /* Main Code is actually here */
 
         onTimerTick: {
-
             Engine.refreshData()
             //gameRunning.text = Helper.sprintf("Current game running is %s", Engine.gameRunning)
 

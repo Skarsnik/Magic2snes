@@ -19,7 +19,7 @@ Magic2Snesw::Magic2Snesw(QWidget *parent) :
 {
     ui->setupUi(this);
     m_settings = new QSettings("skarsnik.nyo.fr", "Magic2SNES");
-    qmlViewer = new QQuickView();
+    qmlViewer = new MyQQuickView();
     qmlViewer->engine()->addImportPath(qApp->applicationDirPath() + "/extrajs/");
     usb2snes = new USB2snes();
     usb2snes->connect();
@@ -100,6 +100,7 @@ void Magic2Snesw::on_runScriptButton_clicked()
     //musb->setEngine(qmlViewer->engine());
     if (!musb->windowTitle().isEmpty())
         qmlViewer->setTitle(musb->windowTitle());
+    qmlViewer->setMagic(musb);
     memory->clearCache();
     memory->resumeWork();
     musb->startTimer();
@@ -190,5 +191,6 @@ void Magic2Snesw::on_refreshButton_clicked()
     if (usb2snes->state() == USB2snes::None)
         usb2snes->connect();
     if (usb2snes->state() == USB2snes::Ready)
-      ui->statusLabel->setText("READY - " + usb2snes->firmwareString() + " - " + usb2snes->infos()[2]);
+        ui->statusLabel->setText("READY - " + usb2snes->firmwareString() + " - " + usb2snes->infos()[2]);
 }
+

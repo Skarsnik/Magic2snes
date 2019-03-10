@@ -57,6 +57,16 @@ void MagicUSB2Snes::stopTimer()
     emit end();
 }
 
+void MagicUSB2Snes::pauseTimer()
+{
+    qtimer.stop();
+}
+
+void MagicUSB2Snes::resumeTimer()
+{
+    qtimer.start();
+}
+
 int MagicUSB2Snes::timer() const
 {
     return m_timer;

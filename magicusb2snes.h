@@ -24,6 +24,8 @@ public:
     void        setEngine(QQmlEngine* engine);
     void        startTimer();
     void        stopTimer();
+    void        pauseTimer();
+    void        resumeTimer();
 
     int timer() const;
 

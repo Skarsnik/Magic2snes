@@ -33,7 +33,8 @@ SOURCES += \
     rommapping/mapping_hirom.c \
     rommapping/mapping_lorom.c \
     debugconsole.cpp \
-    bit.cpp
+    bit.cpp \
+    myqquickview.cpp
 
 HEADERS += \
         magic2snesw.h \
@@ -42,7 +43,8 @@ HEADERS += \
     rommapping/rommapping.h \
     memory.h \
     debugconsole.h \
-    bit.h
+    bit.h \
+    myqquickview.h
 
 FORMS += \
         magic2snesw.ui \

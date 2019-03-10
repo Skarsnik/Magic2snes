@@ -6,6 +6,7 @@
 #include "usb2snes/usb2snes.h"
 #include "bit.h"
 #include "memory.h"
+#include "myqquickview.h"
 
 namespace Ui {
 class Magic2Snesw;
@@ -40,7 +41,7 @@ private slots:
 private:
     Ui::Magic2Snesw *ui;
     QString         scriptFile;
-    QQuickView*     qmlViewer;
+    MyQQuickView*   qmlViewer;
     USB2snes*       usb2snes;
     Memory*         memory;
     Bit*            bit;
