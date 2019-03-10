@@ -1,0 +1,39 @@
+image: Visual Studio 2017
+
+init:
+  - set QTDIR=C:\Qt\5.12.1\msvc2017_64
+  - set PATH=%PATH%;C:\Qt\5.12.1\msvc2017_64\bin;
+  - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" amd64
+build_script:
+  - qmake Magic2Snes.pro -spec win32-msvc "CONFIG+=release"
+  - nmake
+
+after_build:
+  - mkdir Magic2Snes
+  - copy release\Magic2Snes.exe Magic2Snes\
+  - cd Magic2Snes
+  - windeployqt.exe --no-translations --no-opengl-sw --no-svg --no-webkit --no-webkit2 --release -qmldir ..\examples\ Magic2Snes.exe 
+  - copy /y ..\License-GPL3.txt Licence-GPLV3.txt
+  - mkdir examples
+  - xcopy ..\examples examples /syq
+  - cd ..
+  - 7z a Magic2Snes-%APPVEYOR_REPO_TAG_NAME%.7z Magic2Snes
+
+
+artifacts:
+  - path: QUsb2Snes-$(APPVEYOR_REPO_TAG_NAME).7z
+    name: package
+  - path: release\QUsb2Snes.exe
+    name: executable
+
+deploy:
+  description: 'Automated deployment'
+  provider: GitHub
+  auth_token:
+    secure: JF5Ki0Bz+mvMrqw5k0u7273c8GsUAqMwe/P7ts5PKLR+G7InkGqkvTqlAZb6GDGv
+  artifact: release\QUsb2Snes.exe, QUsb2Snes-$(APPVEYOR_REPO_TAG_NAME).7z
+  draft: true
+  prerelease: false
+  on:
+    branch: master                 # release from master branch only
+    APPVEYOR_REPO_TAG: true
