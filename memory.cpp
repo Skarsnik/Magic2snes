@@ -111,6 +111,14 @@ quint16 Memory::readUnsignedByte(unsigned int addr)
     return (quint8) readByte(addr);
 }
 
+quint16 Memory::readBCDByte(unsigned int addr)
+{
+    quint16 value = readUnsignedByte(addr);
+    quint16 toret = value & 0x0F;
+    toret += (value >> 4) * 10;
+    return toret;
+}
+
 qint16 Memory::readWord(unsigned int addr)
 {
     return readMemory<qint16>(addr);

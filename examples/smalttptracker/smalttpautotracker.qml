@@ -254,6 +254,9 @@ Rectangle {
             smBeams.setProperty(4, "owned", samus.beams.plasma)
             smBeams.setProperty(5, "owned", samus.beams.grapple)
 
+            smSuits.setProperty(0, "owned", samus.suits.varia)
+            smSuits.setProperty(1, "owned", samus.suits.gravity)
+
             energyText.text = Helper.sprintf("%d/%d   <font color='yellow'>R</font> %d/%d", samus.energy, samus.energymax, samus.reservemax, samus.reserve)
             ammoText.text = Helper.sprintf("M: %d/%03d    SM: %02d/%02d    PB: %02d/%02d", samus.ammo.missiles, samus.ammo.missilesmax,
                                            samus.ammo.supers, samus.ammo.supersmax,

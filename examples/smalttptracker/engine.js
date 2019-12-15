@@ -10,7 +10,8 @@ You can detect the currently running game though by reading SRAM $A173FE
 $0000 is ALTTP, anything else is SM
 */
 
-var lSMSRAM = 0xA16010
+//var lSMSRAM = 0xA16010
+var lSMSRAM = 0xa17900;
 var lSMWRAM = 0x7E09A2
 var lalttpSRAM = 0xA17B00
 var lalttpWRAM = 0x7EF300
@@ -20,7 +21,8 @@ var lalttpRunning = 0xA173FE
 
 // https://github.com/tewtal/alttp_sm_combo_randomizer_rom/blob/master/src/z3/items.asm#L99
 // Offset by 2 to get the collected stuff and not equiped
- var smitems_location = { "Varia Suit" : {offset : 2, flag : 0x0001},
+ var smitems_location = {
+                        "Varia Suit" : {offset : 2, flag : 0x0001},
                         "Gravity Suit" : {offset : 2, flag : 0x0020},
                         "Morphball" : {offset : 2, flag : 0x0004},
                         "Bombs" : {offset : 2, flag : 0x1000},

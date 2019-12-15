@@ -25,6 +25,7 @@ public slots:
     qint16          readByte(unsigned int addr);
     qint16          readSignedByte(unsigned int addr);
     quint16         readUnsignedByte(unsigned int addr);
+    quint16         readBCDByte(unsigned int addr);
 
     qint16          readWord(unsigned int addr);
     qint16          readSignedWord(unsigned int addr);
